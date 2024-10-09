@@ -2,45 +2,62 @@
 #define LINKED_LIST_H
 
 #include <stdbool.h>
+#include <stddef.h>  // for size_t
 
-typedef struct list_node {
-    int data;
-    struct list_node* next;
-    struct list_node* prev;
-} list_node;
+typedef struct Data
+{
+    void* data;  // Void pointer to store any type of data
+    size_t size; // Size of the data (used for copying and managing memory)
+} Data;
 
-typedef struct linked_list {
-    list_node* head;
-    list_node* tail;
-    int length;
-} linked_list;
+typedef struct Node
+{
+    Data data;         // Data contained in the node
+    struct Node* next; // Pointer to the next node in the list
+    struct Node* prev; // Pointer to the previous node in the list
+} Node;
+
+typedef struct LinkedList
+{
+    Node* head;   // Pointer to the first node
+    Node* tail;   // Pointer to the last node
+    size_t size;  // Number of elements in the list
+} LinkedList;
+
+// Constructor and destructor for the linked list
+LinkedList* llst_create();            // Create a new linked list
+void llst_free(LinkedList* list);     // Free the memory of the linked list and its nodes
+
+// Constructor and destructor for a node
+Node* llst_create_node(void* value, size_t size);  // Create a new node with the given value and size
+void llst_free_node(Node* node);                   // Free the memory of a node
 
 // Functions to manipulate data
-void add_last(linked_list* list, int data);
-void add_first(linked_list* list, int data);
-int get(linked_list* list, int index);
-int index_of(linked_list* list, int data);
-void insert_after(linked_list* list, int index, int data);
-void insert_before(linked_list* list, int index, int data);
-int first(linked_list* list);
-int last(linked_list* list);
-void remove_data(linked_list* list, int data);
-void remove_index(linked_list* list, int index);
-int remove_first(linked_list* list);
-int remove_last(linked_list* list);
+void llst_add_last(LinkedList* list, void* value, size_t size);   // Add an element to the end of the list
+void llst_add_first(LinkedList* list, void* value, size_t size);  // Add an element to the beginning of the list
+void* llst_get(LinkedList* list, size_t index);                   // Get the value at the specified index (returns void pointer)
+int llst_index_of(LinkedList* list, void* value, size_t size);    // Get the index of the specified value
+void llst_insert_after(LinkedList* list, size_t index, void* value, size_t size);  // Insert a value after the given index
+void llst_insert_before(LinkedList* list, size_t index, void* value, size_t size); // Insert a value before the given index
+void* llst_first(LinkedList* list);  // Get the value of the first element in the list (returns void pointer)
+void* llst_last(LinkedList* list);   // Get the value of the last element in the list (returns void pointer)
+void llst_remove_data(LinkedList* list, void* value, size_t size);  // Remove an element by value
+void llst_remove_index(LinkedList* list, size_t index);              // Remove an element by index
+void* llst_remove_first(LinkedList* list);  // Remove and return the first element (returns void pointer)
+void* llst_remove_last(LinkedList* list);   // Remove and return the last element (returns void pointer)
 
 // Functions to manipulate nodes
-void add_node_last(linked_list* list, list_node* new_node);
-void add_node_first(linked_list* list, list_node* new_node);
-void insert_after_node(linked_list* list, list_node* new_node, list_node* existing_node);
-void insert_before_node(linked_list* list, list_node* new_node, list_node* existing_node);
-void remove_node(linked_list* list, list_node* node);
+void llst_add_node_last(LinkedList* list, Node* new_node);  // Add a node to the end of the list
+void llst_add_node_first(LinkedList* list, Node* new_node); // Add a node to the beginning of the list
+void llst_insert_after_node(LinkedList* list, Node* existing_node, Node* new_node);  // Insert a new node after the given node
+void llst_insert_before_node(LinkedList* list, Node* existing_node, Node* new_node); // Insert a new node before the given node
+void llst_remove_node(LinkedList* list, Node* node);  // Remove a specific node from the list
+Node* llst_node_at(LinkedList* list, size_t index);   // Get the node at the specified index
+void llst_swap_nodes(Node* node_a, Node* node_b);     // Swap the data between two nodes
 
 // Utility functions
-void clear(linked_list* list);
-int size(linked_list* list);
-void dump_list(linked_list* list);
-list_node* node_at(linked_list* list, int index);
-void swap_nodes(list_node* node_a, list_node* node_b);
+void llst_clear(LinkedList* list);        // Clear all the elements from the list
+size_t llst_size(LinkedList* list);       // Get the size (number of elements) of the list
+void llst_dump_list(LinkedList* list, void (*print_fn)(void*));  // Dump the contents of the list using a custom print function
 
 #endif // LINKED_LIST_H
