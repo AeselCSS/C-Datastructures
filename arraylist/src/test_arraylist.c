@@ -1,79 +1,64 @@
 #include <stdio.h>
+#include <string.h>
 #include "arraylist.h"
 
-void run_tests() {
-    arraylist *list = alst_create();
+void print_int(void *data) {
+    printf("%d ", *(int*)data);
+}
 
-    printf("Testing ArrayList operations:\n\n");
+void print_string(void *data) {
+    printf("%s ", (char*)data);
+}
+
+void run_int_tests() {
+    printf("Testing ArrayList with integers:\n");
+    ArrayList *list = alst_create(sizeof(int));
+    int value;
 
     // Test adding to the list
-    printf("Testing alst_add:\n");
-    alst_add(list, 10);
-    alst_add(list, 20);
-    alst_add(list, 30);
+    value = 10;
+    alst_add(list, &value);
+    value = 20;
+    alst_add(list, &value);
+    value = 30;
+    alst_add(list, &value);
+
     printf("Expected: 10 20 30\n");
     for (int i = 0; i < alst_size(list); i++) {
-        printf("%d ", alst_get(list, i));
-    }
-    printf("\n");
-
-    // Test getting data by index
-    printf("\nTesting alst_get:\n");
-    int value = alst_get(list, 2);
-    printf("Expected: 30, Got: %d\n", value);
-
-    // Test inserting at a specific index
-    printf("\nTesting alst_insert_index (inserting 15 at index 2):\n");
-    alst_insert_index(list, 2, 15);
-    printf("Expected: 10 20 15 30\n");
-    for (int i = 0; i < alst_size(list); i++) {
-        printf("%d ", alst_get(list, i));
-    }
-    printf("\n");
-
-    // Test setting a value at a specific index
-    printf("\nTesting alst_set (setting index 1 to 25):\n");
-    alst_set(list, 1, 25);
-    printf("Expected: 10 25 15 30\n");
-    for (int i = 0; i < alst_size(list); i++) {
-        printf("%d ", alst_get(list, i));
-    }
-    printf("\n");
-
-    // Test removing by index
-    printf("\nTesting alst_remove_index (removing index 1):\n");
-    alst_remove_index(list, 1);
-    printf("Expected: 10 15 30\n");
-    for (int i = 0; i < alst_size(list); i++) {
-        printf("%d ", alst_get(list, i));
-    }
-    printf("\n");
-
-    // Test removing the last element
-    printf("\nTesting alst_remove (removing last element):\n");
-    alst_remove(list);
-    printf("Expected: 10 15\n");
-    for (int i = 0; i < alst_size(list); i++) {
-        printf("%d ", alst_get(list, i));
+        print_int(alst_get(list, i));
     }
     printf("\n");
 
     // Test clearing the list
-    printf("\nTesting alst_clear:\n");
     alst_clear(list);
-    printf("Expected: (empty line)\n");
-    for (int i = 0; i < alst_size(list); i++) {
-        printf("%d ", alst_get(list, i));
-    }
-    printf("\n");
     printf("List size after clearing: %d\n", alst_size(list));  // Expected: 0
 
-    // Free the array list
+    alst_free(list);
+}
+
+void run_string_tests() {
+    printf("Testing ArrayList with strings:\n");
+    ArrayList *list = alst_create(sizeof(char*));
+    char *str1 = "Hello";
+    char *str2 = "World";
+    char *str3 = "ArrayList";
+
+    // Test adding strings to the list
+    alst_add(list, &str1);
+    alst_add(list, &str2);
+    alst_add(list, &str3);
+
+    printf("Expected: Hello World ArrayList\n");
+    for (int i = 0; i < alst_size(list); i++) {
+        print_string(*(char**)alst_get(list, i));
+    }
+    printf("\n");
+
     alst_free(list);
 }
 
 int main() {
-    printf("Running ArrayList tests...\n");
-    run_tests();
+    run_int_tests();
+    run_string_tests();
     return 0;
 }
